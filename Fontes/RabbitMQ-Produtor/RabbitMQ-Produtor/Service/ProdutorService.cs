@@ -25,7 +25,7 @@ namespace RabbitMQ_Produtor.Service
                 UserName = "guest",
                 Password = "guest",
                 VirtualHost = "/",
-                RequestedHeartbeat = 60
+                RequestedHeartbeat = TimeSpan.FromSeconds(60)
             };
 
             connection = connectionFactory.CreateConnection();
@@ -33,46 +33,48 @@ namespace RabbitMQ_Produtor.Service
         }
 
 
-        public void Publish(string chaveFila, string jsonContent)
+        public void Publish(string routingKey, string jsonContent)
         {
-            string exchange = "mb.esteira.direct-exchange";
-            string routingKey = "teste-routing-key";
+            string queueName = "mb.esteira.validacao-cpf";
+            string exchangeName = "mb.esteira.direct-exchange";
+           
 
             //Caso não exista a exchange, ela será criada em tempo de execução.
             model.ExchangeDeclare(
-                exchange: exchange,
+                exchange: exchangeName,
                 ///Direct 
                 ///Fanout
                 ///Headers
                 ///Topic 
                 type: ExchangeType.Direct,
-                durable: false, //Quando a exchange é marcada como durable, a fila permanece ativa quando o servidor é reiniciado.
-                autoDelete: false //Quando ativada a exchange é automaticamente excluída após todos os consumidores terminarem de usá-la.
+                durable: false, //Quando ativo, a exchange permanece ativa quando o servidor é reiniciado.
+                autoDelete: false //Quando ativo, a exchange é automaticamente excluída após todos os consumidores terminarem de usá-la.
                 );
 
             //Caso não exista a queue, ela será criada em tempo de execução.
             model.QueueDeclare(
-                queue: chaveFila,
-                durable: false, //Quando a fila é marcada como durable, a fila permanece ativa quando o servidor é reiniciado.
+                queue: queueName,
+                durable: false, //Quando ativo, a fila permanece ativa quando o servidor é reiniciado.
                 exclusive: false, //Filas exclusivas só podem ser acessadas através da conexão corrent e são excluídas quando a conexão é fechada.
-                autoDelete: false, //Quando ativada a fila é automaticamente excluída após todos os consumidores terminarem de usá-la.
+                autoDelete: false, //Quando ativo, a fila é automaticamente excluída após todos os consumidores terminarem de usá-la.
                 arguments: null
                 );
 
             //Relaciona a fila criada à exchange criada.
             model.QueueBind(
-                queue: chaveFila,
-                exchange: exchange,
+                queue: queueName,
+                exchange: exchangeName,
                 routingKey: routingKey);
 
             //Você pode usar variaveis sobrecarregadas para especificar propriedades de mensagens.
             var props = model.CreateBasicProperties();
             props.DeliveryMode = 2; //Modo de entrega persistente.
-            props.Expiration = "36000000"
-;
+            props.Expiration = "36000000"; //Tempo de vida da mensagem.
+
+            //Funciona passando routingKey="Nome da fila" e exchange="" (vazio). Neste caso o rabbit direciona para a exchange Default.
             model.BasicPublish(
-                exchange: "",
-                routingKey: chaveFila,
+                exchange: exchangeName, 
+                routingKey: routingKey,
                 basicProperties: null,
                 body: Encoding.UTF8.GetBytes(jsonContent));
         }

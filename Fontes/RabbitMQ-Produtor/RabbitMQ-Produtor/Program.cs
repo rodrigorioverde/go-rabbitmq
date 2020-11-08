@@ -13,18 +13,16 @@ namespace RabbitMQ_Produtor
 
             var chaveFila = "mb.esteira.validacao-cpf";
 
-
             var produtorService = new ProdutorService();
 
-
             ///Loop para reproduzir um consumo externo de APIs
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < 100; i++)
             {
                 var entrada = new Entrada
                 {
                     Proposta = 1000 + i,
                     Cpf = GerarCpf(),
-                    Observacao = string.Format("Mensagem {0}", i),
+                    Observacao = $"Mensagem {i}",
                     DataRegistro = DateTime.Now
                 };
 
@@ -32,7 +30,7 @@ namespace RabbitMQ_Produtor
 
                 produtorService.Publish(chaveFila, json);
 
-                Console.WriteLine("Mensagem {0} enviada}", i.ToString());
+                Console.WriteLine($"Mensagem {i} enviada");
             }
 
             Console.ReadKey();

@@ -15,7 +15,7 @@ namespace RabbitMQ_Produtor
             var routingKey = "mb.esteira.validacao-cpf";
 
             var produtorService = new ProdutorService();
-
+             
             ///Loop para reproduzir um consumo externo de APIs
             for (int i = 0; i < 100; i++)
             {

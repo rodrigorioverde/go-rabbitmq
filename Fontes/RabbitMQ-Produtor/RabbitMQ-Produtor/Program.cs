@@ -9,9 +9,10 @@ namespace RabbitMQ_Produtor
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("****Enviar Messagnes*****");
+            Console.ForegroundColor = ConsoleColor.Blue; 
+            Console.WriteLine("****Enviando Mensagens*****");
 
-            var chaveFila = "mb.esteira.validacao-cpf";
+            var routingKey = "mb.esteira.validacao-cpf";
 
             var produtorService = new ProdutorService();
 
@@ -28,7 +29,7 @@ namespace RabbitMQ_Produtor
 
                 var json = JsonConvert.SerializeObject(entrada);
 
-                produtorService.Publish(chaveFila, json);
+                produtorService.Publish(routingKey, json);
 
                 Console.WriteLine($"Mensagem {i} enviada");
             }

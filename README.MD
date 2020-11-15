@@ -14,7 +14,7 @@ Para iniciar a utilização, obtenha o aquivo **docker-compose.yaml** na pasta U
 $ docker-compose up -d
 ```
 
-![](https://github.com/rodrigorioverde/go-rabbitmq/blob/master/Uteis/docker-compose.png?w=512)
+![](https://github.com/rodrigorioverde/go-rabbitmq/blob/master/Uteis/docker-compose.png?w=200)
 
 O RabbitMQ estará em execução no ambiente Docker:
 
